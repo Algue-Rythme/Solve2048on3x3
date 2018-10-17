@@ -13,8 +13,6 @@ using namespace std;
 #define MAXELEM 10
 #endif
 
-#define TARGET 9
-
 const int64_t base = MAXELEM + 1;
 const int64_t bases[9] = {
     1,
@@ -73,12 +71,14 @@ Board move_left(Board const& refboard) {
     for (int i = 0; i < 3; ++i) {
         if (ret.data[i][0] == ret.data[i][1] && ret.data[i][0] != 0) {
             ret.data[i][0] += 1;
-            ret.score += (TARGET == ret.data[i][0]);
+            if (MAXELEM == ret.data[i][0])
+                ret.score = 1.f;
             ret.data[i][1] = 0;
         }
         if (ret.data[i][1] == ret.data[i][2] && ret.data[i][1] != 0) {
             ret.data[i][1] += 1;
-            ret.score += (TARGET == ret.data[i][1]);
+            if (MAXELEM == ret.data[i][1])
+                ret.score = 1.f;
             ret.data[i][2] = 0;
         }
     }
