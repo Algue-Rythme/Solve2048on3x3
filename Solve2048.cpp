@@ -5,7 +5,7 @@
 
 using namespace std;
 
-#define HARD
+#define EASY
 
 #ifdef EASY
 #define MAXELEM 9
@@ -73,12 +73,12 @@ Board move_left(Board const& refboard) {
     for (int i = 0; i < 3; ++i) {
         if (ret.data[i][0] == ret.data[i][1] && ret.data[i][0] != 0) {
             ret.data[i][0] += 1;
-            ret.score = (1 == ret.data[i][0]);
+            ret.score += (TARGET == ret.data[i][0]);
             ret.data[i][1] = 0;
         }
         if (ret.data[i][1] == ret.data[i][2] && ret.data[i][1] != 0) {
             ret.data[i][1] += 1;
-            ret.score = (1 == ret.data[i][1]);
+            ret.score += (TARGET == ret.data[i][1]);
             ret.data[i][2] = 0;
         }
     }
