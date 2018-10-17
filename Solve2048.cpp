@@ -8,7 +8,7 @@ using namespace std;
 #define EASY
 
 #ifdef EASY
-#define MAXELEM 9
+#define MAXELEM 10
 #else
 #define MAXELEM 10
 #endif
@@ -235,18 +235,16 @@ float dfs(Board const& board) {
     maxindex = max(maxindex, board.code);
     nbstates += 1;
     seen[board.code] = 0.f;
-    if (board.score == 0.f) {
-        auto neighbours = get_neighbours(board);
-        for (int i = 0; i < (int)neighbours.size(); ++i) {
-            float thisdir = 0.f;
-            for(auto const& neighbour : neighbours[i]) {
-                thisdir += dfs(neighbour);
-            }
-            thisdir /= neighbours[i].size();
-            if (thisdir > seen[board.code]) {
-                seen[board.code] = thisdir;
-                policy[board.code] = moves[i];
-            }
+    auto neighbours = get_neighbours(board);
+    for (int i = 0; i < (int)neighbours.size(); ++i) {
+        float thisdir = 0.f;
+        for(auto const& neighbour : neighbours[i]) {
+            thisdir += dfs(neighbour);
+        }
+        thisdir /= neighbours[i].size();
+        if (thisdir > seen[board.code]) {
+            seen[board.code] = thisdir;
+            policy[board.code] = moves[i];
         }
     }
     seen[board.code] += board.score;
