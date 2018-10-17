@@ -27,7 +27,7 @@ const int64_t bases[9] = {
 };
 
 struct Board {
-    Board():code(0),score(0){
+    Board():code(0),score(0.f){
         data[0][0] = 0;
         data[0][1] = 0;
         data[0][2] = 0;
@@ -39,7 +39,7 @@ struct Board {
         data[2][2] = 0;
     }
     int64_t code;
-    int32_t score;
+    float score;
     int8_t data[3][3];
     int64_t compute_enc() {
         code = 0;
@@ -235,16 +235,18 @@ float dfs(Board const& board) {
     maxindex = max(maxindex, board.code);
     nbstates += 1;
     seen[board.code] = 0.f;
-    auto neighbours = get_neighbours(board);
-    for (int i = 0; i < (int)neighbours.size(); ++i) {
-        float thisdir = 0.f;
-        for(auto const& neighbour : neighbours[i]) {
-            thisdir += dfs(neighbour);
-        }
-        thisdir /= neighbours[i].size();
-        if (thisdir > seen[board.code]) {
-            seen[board.code] = thisdir;
-            policy[board.code] = moves[i];
+    if (board.score == 0.f) {
+        auto neighbours = get_neighbours(board);
+        for (int i = 0; i < (int)neighbours.size(); ++i) {
+            float thisdir = 0.f;
+            for(auto const& neighbour : neighbours[i]) {
+                thisdir += dfs(neighbour);
+            }
+            thisdir /= neighbours[i].size();
+            if (thisdir > seen[board.code]) {
+                seen[board.code] = thisdir;
+                policy[board.code] = moves[i];
+            }
         }
     }
     seen[board.code] += board.score;
