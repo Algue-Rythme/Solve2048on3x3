@@ -154,7 +154,7 @@ Board proj(Board const& refboard) {
     if (rot90.compute_enc() < bestboard.code) {
         bestboard = rot90;
     }
-    Board antidiag = diagsym(refboard);
+    Board antidiag = diagsym(rot90);
     if (antidiag.compute_enc() < bestboard.code) {
         bestboard = antidiag;
     }
