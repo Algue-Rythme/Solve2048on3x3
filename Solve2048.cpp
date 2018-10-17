@@ -8,7 +8,7 @@ using namespace std;
 #define EASY
 
 #ifdef EASY
-#define MAXELEM 10
+#define MAXELEM 9
 #else
 #define MAXELEM 10
 #endif
