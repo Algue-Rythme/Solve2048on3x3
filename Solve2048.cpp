@@ -257,9 +257,9 @@ void print(Board const& b) {
         for (int j = 0; j < 3; ++j) {
             cout.width(6);
             if (b.data[i][j] != 0)
-                cout << left << (1<<b.data[i][j]) << "|";
+                cout << right << (1<<b.data[i][j]);
             else
-                cout << left << '.' << "|";
+                cout << right << '.' << "|";
         }
         cout << "\n";
     }
