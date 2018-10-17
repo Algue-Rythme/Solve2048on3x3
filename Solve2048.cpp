@@ -13,7 +13,7 @@ using namespace std;
 #define MAXELEM 10
 #endif
 
-#define TARGET 5
+#define TARGET 9
 
 const int64_t base = MAXELEM + 1;
 const int64_t bases[9] = {
