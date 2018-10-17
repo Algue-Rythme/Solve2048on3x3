@@ -297,6 +297,8 @@ void play() {
         auto pot = add_tiles(b);
         b = pot[0];
         print(b);
+        char garb;
+        cin >> garb;
     }
 }
 
