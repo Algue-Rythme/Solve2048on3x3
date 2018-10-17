@@ -296,7 +296,7 @@ void play() {
         }
         auto pot = add_tiles(b);
         b = pot[0];
-        code = b.compute_enc();
+        code = proj(b).compute_enc();
         print(b);
         char garb;
         cin >> garb;
