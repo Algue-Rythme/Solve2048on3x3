@@ -251,13 +251,64 @@ float dfs(Board const& board) {
     return seen[board.code];
 }
 
+void print(Board const& b) {
+    cout << b.code << " " << b.score << "\n";
+    for (int i = 0; i < 3; ++i) {
+        for (int j = 0; j < 3; ++j) {
+            cout.width(6);
+            if (b.data[i][j] != 0)
+                cout << left << (2<<b.data[i][j]) << "|";
+            else
+                cout << left << '.' << "|";
+        }
+        cout << "\n";
+    }
+}
+
+void play() {
+    Board b;
+    int64_t code = 0;
+    print(b);
+    while (policy[code] != '#') {
+        cout << "plays " << policy[code] << "\n";
+        Board rot90 = rot(b);
+        Board rot180 = rot(rot90);
+        Board rot270 = rot(rot180);
+        switch (policy[code]) {
+            case 'L':
+            b = move_left(b);
+            break ;
+
+            case 'D':
+            b = move_left(rot90);
+            b = rot(rot(rot(b)));
+            break ;
+
+            case 'R':
+            b = move_left(rot180);
+            b = rot(rot(b));
+            break ;
+
+            case 'U':
+            b = move_left(rot270);
+            b = rot(b);
+            break ;
+        }
+        auto pot = add_tiles(b);
+        b = pot[0];
+        print(b);
+    }
+}
+
 int main() {
     for (int i = 0; i <= maxlength; ++i) {
         seen[i] = -1.f;
+        policy[i] = '#';
     }
     Board start;
     dfs(start);
     cout << maxindex << "\n";
     cout << nbstates << "\n";
     cout << seen[0] << "\n";
+    play();
 }
