@@ -1,7 +1,8 @@
 #include <cstdint>
 #include <iostream>
-#include <bitset>
+#include <unordered_map>
 #include <vector>
+#include <algorithm>
 
 using namespace std;
 
@@ -221,34 +222,40 @@ vector<vector<Board>> get_neighbours(Board refboard) {
     return neighbours;
 }
 
-const int64_t maxlength = 640932812; // from previous computations
-float seen[maxlength+1];
-char policy[maxlength+1];
+struct Node {
+    Node()=default;
+    Node(float v, char policy):v(v),policy(policy){}
+    float v;
+    char policy;
+};
+
+unordered_map<int, Node> nodes;
 char moves [] = "LDRU";
-int64_t maxindex = 0;
-int64_t nbstates = 0;
 
 float dfs(Board const& board) {
-    if (seen[board.code] != -1.f) {
-        return seen[board.code];
+    auto it = nodes.find(board.code);
+    if (it != nodes.end()) {
+        return it->second.v;
     }
-    maxindex = max(maxindex, board.code);
-    nbstates += 1;
-    seen[board.code] = 0.f;
-    auto neighbours = get_neighbours(board);
-    for (int i = 0; i < (int)neighbours.size(); ++i) {
-        float thisdir = 0.f;
-        for(auto const& neighbour : neighbours[i]) {
-            thisdir += dfs(neighbour);
-        }
-        thisdir /= neighbours[i].size();
-        if (thisdir > seen[board.code]) {
-            seen[board.code] = thisdir;
-            policy[board.code] = moves[i];
+    float v = 0.f;
+    char policy = '#';
+    if (board.score == 0) {
+        auto neighbours = get_neighbours(board);
+        for (int i = 0; i < (int)neighbours.size(); ++i) {
+            float thisdir = 0.f;
+            for(auto const& neighbour : neighbours[i]) {
+                thisdir += dfs(neighbour);
+            }
+            thisdir /= neighbours[i].size();
+            if (thisdir > v) {
+                v = thisdir;
+                policy = moves[i];
+            }
         }
     }
-    seen[board.code] += board.score;
-    return seen[board.code];
+    v += board.score;
+    nodes.insert({board.code, Node(v,policy)});
+    return v;
 }
 
 void print(Board const& b) {
@@ -269,12 +276,12 @@ void play() {
     Board b;
     int64_t code = 0;
     print(b);
-    while (policy[code] != '#') {
-        cout << "plays " << policy[code] << "\n";
+    while (nodes[code].policy != '#') {
+        cout << "plays " << nodes[code].policy << "\n";
         Board rot90 = rot(b);
         Board rot180 = rot(rot90);
         Board rot270 = rot(rot180);
-        switch (policy[code]) {
+        switch (nodes[code].policy) {
             case 'L':
             b = move_left(b);
             break ;
@@ -304,14 +311,13 @@ void play() {
 }
 
 int main() {
-    for (int i = 0; i <= maxlength; ++i) {
-        seen[i] = -1.f;
-        policy[i] = '#';
-    }
     Board start;
+    cout << "computing..." << endl;
     dfs(start);
-    cout << maxindex << "\n";
-    cout << nbstates << "\n";
-    cout << seen[0] << "\n";
-    play();
+    cout << "index max of a board : "
+         << max_element(begin(nodes),end(nodes),[](auto const& a, auto const& b){ return a.first < b.first;})->first << "\n";
+    cout << "number of node before dead end or reaching 512 : "
+         << nodes.size() << "\n";
+    cout << "probability of reaching 512 : " << nodes[0].v << "\n";
+    //play();
 }
